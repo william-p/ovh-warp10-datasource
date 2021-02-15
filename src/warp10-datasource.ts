@@ -73,6 +73,38 @@ export default class Warp10Datasource {
             return
           }
 
+          // Leaflet panel data type
+          if (opts.targets[i].friendlyQuery.nameFormat == '@map@') {
+            GTS.stackFilter(res.data).forEach(gts => {
+              let latitude = {
+                target: (opts.targets[i].hideLabels) ? gts.c : gts.nameWithLabels + '-lat',
+                datapoints: [],
+                refId: (response.query || {}).refId + '-lat'
+              }
+
+              let longitude = {
+                target: (opts.targets[i].hideLabels) ? gts.c : gts.nameWithLabels + '-lon',
+                datapoints: [],
+                refId: (response.query || {}).refId + '-lon'
+              }
+
+              // show attributes
+              // if (opts.targets[i].hideAttributes !== undefined && !opts.targets[i].hideAttributes) {
+              //  grafanaGts.target += gts.formatedAttributes
+              //}
+
+              gts.v.forEach(dp => {
+                latitude.datapoints.push([dp[1], dp[0] / 1000])
+                longitude.datapoints.push([dp[2], dp[0] / 1000])
+              })
+
+              data.push(latitude)
+              data.push(longitude)
+            })
+
+            return { data }
+          }
+
           GTS.stackFilter(res.data).forEach(gts => {
             let grafanaGts = {
               target: (opts.targets[i].hideLabels) ? gts.c : gts.nameWithLabels,
