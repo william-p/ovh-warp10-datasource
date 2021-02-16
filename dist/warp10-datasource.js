@@ -82,28 +82,19 @@ System.register(["./gts", "./table", "./geo", "./query"], function (exports_1, c
                             }
                             // Leaflet panel data type
                             if (opts.targets[i].friendlyQuery.nameFormat == '@map@') {
-                                gts_1.default.stackFilter(res.data).forEach(function (gts) {
-                                    var latitude = {
-                                        target: (opts.targets[i].hideLabels) ? gts.c : gts.nameWithLabels + '-lat',
-                                        datapoints: [],
-                                        refId: (response.query || {}).refId + '-lat'
-                                    };
-                                    var longitude = {
-                                        target: (opts.targets[i].hideLabels) ? gts.c : gts.nameWithLabels + '-lon',
-                                        datapoints: [],
-                                        refId: (response.query || {}).refId + '-lon'
-                                    };
-                                    // show attributes
-                                    // if (opts.targets[i].hideAttributes !== undefined && !opts.targets[i].hideAttributes) {
-                                    //  grafanaGts.target += gts.formatedAttributes
-                                    //}
-                                    gts.v.forEach(function (dp) {
-                                        latitude.datapoints.push([dp[1], dp[0] / 1000]);
-                                        longitude.datapoints.push([dp[2], dp[0] / 1000]);
-                                    });
-                                    data.push(latitude);
-                                    data.push(longitude);
-                                });
+                                var grafanaGts = {
+                                    target: 'map',
+                                    type: 'table',
+                                    refId: (response.query || {}).refId,
+                                    columns: [
+                                        { text: 'time' },
+                                        { text: 'latitude' },
+                                        { text: 'longitude' },
+                                        { text: 'value' }
+                                    ],
+                                    rows: res.data[0][0].v
+                                };
+                                data.push(grafanaGts);
                                 return { data: data };
                             }
                             gts_1.default.stackFilter(res.data).forEach(function (gts) {
